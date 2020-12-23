@@ -248,13 +248,7 @@ Resources:
                   - "logs:CreateLogStream"
                   - "logs:PutLogEvents"
                 Resource:
-                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*"
-              - Sid: iamAccess
-                Effect: Allow
-                Action:
-                  - iam:CreateRole
-                Resource:
-                  - "*"                  
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*"             
               - Sid: packer
                 Effect: Allow
                 Action:
