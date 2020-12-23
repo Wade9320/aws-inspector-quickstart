@@ -155,20 +155,20 @@ Resources:
               - Sid: iamAccess
                 Effect: Allow
                 Action:
-                  - iam:*
-                  # - iam:CreateRole
-                  # - iam:CreatePolicy
-                  # - iam:AttachRolePolicy
-                  # - iam:DeleteRole
-                  # - iam:DetachRolePolicy
-                  # - iam:CreateInstanceProfile
-                  # - iam:GetRolePolicy
-                  # - iam:PutRolePolicy
-                  # - iam:DeleteRolePolicy
-                  # - iam:AddRoleToInstanceProfile
-                  # - iam:RemoveRoleFromInstanceProfile
-                  # - iam:DeleteInstanceProfile
-                  # - iam:PassRole
+                  #- iam:*
+                  - iam:CreateRole
+                  - iam:CreatePolicy
+                  - iam:AttachRolePolicy
+                  - iam:DeleteRole
+                  - iam:DetachRolePolicy
+                  - iam:CreateInstanceProfile
+                  - iam:GetRolePolicy
+                  - iam:PutRolePolicy
+                  - iam:DeleteRolePolicy
+                  - iam:AddRoleToInstanceProfile
+                  - iam:RemoveRoleFromInstanceProfile
+                  - iam:DeleteInstanceProfile
+                  - iam:PassRole
                 Resource:
                   - "*"
               - Sid: ec2Access
