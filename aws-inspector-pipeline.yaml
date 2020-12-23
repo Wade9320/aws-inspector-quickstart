@@ -169,7 +169,21 @@ Resources:
               - Sid: ec2Access
                 Effect: Allow
                 Action:
+                  - ec2:AttachVolume
+                  - ec2:CreateTags
+                  - ec2:DeleteSnapshot
+                  - ec2:DeleteVolume
+                  - ec2:DescribeImageAttribute
                   - ec2:DescribeImages
+                  - ec2:DescribeInstances
+                  - ec2:DescribeInstanceStatus
+                  - ec2:DescribeSnapshots
+                  - ec2:DescribeTags
+                  - ec2:DescribeVolumes
+                  - ec2:DetachVolume
+                  - ec2:RunInstances
+                  - ec2:StopInstances
+                  - ec2:TerminateInstances
                 Resource:
                   - "*"
               - Sid: cloudwatch
