@@ -68,7 +68,7 @@ Resources:
         - Sid: InpspectorAWSAccount
           Effect: Allow
           Principal:
-            AWS: !Sub "arn:aws:iam::${AWS::AccountId}:root"
+            AWS: arn:aws:iam::357557129151:root
           Action: sns:Publish
           Resource: !Ref InspectorTopic
       Topics:
@@ -479,7 +479,6 @@ Resources:
         - Key: Environment
           Value: !Ref EnvironmentName
       Timeout: 600
-
   SNSLambdaInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:

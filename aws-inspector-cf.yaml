@@ -75,12 +75,10 @@ Resources:
       ResourceGroupTags: 
         - Key: Name
           Value:  !Ref ec2tag
-
   InspectorAssessmentTarget:
     Type: AWS::Inspector::AssessmentTarget
     Properties: 
       ResourceGroupArn: !Ref InspectorResourceGroup
-
   InspectorAssessmentTemplate:
     Type: AWS::Inspector::AssessmentTemplate
     Properties: 
