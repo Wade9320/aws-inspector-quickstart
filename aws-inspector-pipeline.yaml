@@ -186,6 +186,12 @@ Resources:
                   - ssm:GetParameters
                 Resource:
                   - "*"
+              - Sid: ec2Access
+                Effect: Allow
+                Action:
+                  - ec2:DescribeImages
+                Resource:
+                  - "*"
               - Sid: cloudwatch
                 Effect: Allow
                 Action:
