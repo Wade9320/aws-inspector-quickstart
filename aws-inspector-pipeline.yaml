@@ -152,6 +152,12 @@ Resources:
                   - ssm:GetParameters
                 Resource:
                   - "*"
+              - Sid: iamAccess
+                Effect: Allow
+                Action:
+                  - iam:CreateRole
+                Resource:
+                  - "*"
               - Sid: ec2Access
                 Effect: Allow
                 Action:
