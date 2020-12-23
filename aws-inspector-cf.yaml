@@ -53,7 +53,7 @@ Resources:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: !Ref AMI
-      InstanceType: t2.micro
+      InstanceType: t2.medium
       IamInstanceProfile: !Ref inspectorInstanceProfile
       KeyName: !Ref KeyPair
       SubnetId: {"Fn::ImportValue": !Sub "${networkStackName}-${AWS::Region}-privateAZaId"}  
