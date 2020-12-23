@@ -156,6 +156,8 @@ Resources:
                 Effect: Allow
                 Action:
                   - iam:CreateRole
+                  - iam:AttachRolePolicy
+                  - iam:DeleteRole
                 Resource:
                   - "*"
               - Sid: ec2Access
