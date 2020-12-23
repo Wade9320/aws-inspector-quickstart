@@ -3,14 +3,15 @@ Description: "AWS-Inspector-Quickstart"
 
 Parameters:
   AMI:
-    Description: AMI ID
-    Type: AWS::EC2::Image::Id
+    Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
+    Default: '/infrastructure/base-ami'
   KeyPair:
     Description: Key pair to launch ec2 instance
-    Type: AWS::EC2::KeyPair::KeyName
-  SubnetId:
-    Description: Subnet ID to launch instance for scanning
-    Type: AWS::EC2::Subnet::Id
+    Type: String
+    Default: iopp-poc1
+  networkStackName:
+    Type: String
+    Default: cfn02-network
   ec2tag:
     Description: Tag for ec2 instances for scanning
     Type: String
@@ -82,14 +83,32 @@ Mappings:
       SecurityBest: aarn:aws-us-gov:inspector:us-gov-west-1:850862329162:rulespackage/0-rOTGqe5G
 
 Resources:
-
+  inspectorInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref inspectorInstanceIamRole
+  inspectorInstanceIamRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+      ManagedPolicyArns:
+        - !Sub "arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonEC2RoleforSSM"
   InspectorEC2Instance:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: !Ref AMI
       InstanceType: t2.micro
+      IamInstanceProfile: !Ref inspectorInstanceProfile
       KeyName: !Ref KeyPair
-      SubnetId: !Ref SubnetId
+      SubnetId: {"Fn::ImportValue": !Sub "${networkStackName}-${AWS::Region}-privateAZaId"}  
       Tags:
         - Key: Name
           Value: !Ref ec2tag

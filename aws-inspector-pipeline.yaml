@@ -20,29 +20,14 @@ Parameters:
   EnvironmentName:
     Type: String
     Default: "InspectorQuickstart"
-  VpcCIDR:
-    Type: String
-    Default: 10.192.0.0/16
-  PublicSubnet1CIDR:
-    Type: String
-    Default: 10.192.10.0/24
-  PublicSubnet2CIDR:
-    Type: String
-    Default: 10.192.11.0/24
   KeyPair:
     Description: Key pair to launch ec2 instance
-    Type: AWS::EC2::KeyPair::KeyName
+    Type: String
+    Default: iopp-poc1
   ScanLength:
     Type: Number
     Description: Duration of Inspector Scan in seconds
     Default: 180
-  PackerFile:
-    Type: String
-    Description: Filename of Packer builder to use
-    Default: ami.json
-    AllowedValues:
-      - ami.json
-      - hardened_ami.json
 
 Mappings: 
   RegionMap:
@@ -76,93 +61,6 @@ Mappings:
       InspectorAccountID: arn:aws:iam::850862329162:root
 
 Resources:
-  VPC:
-    Type: AWS::EC2::VPC
-    Properties:
-      CidrBlock: !Ref VpcCIDR
-      EnableDnsSupport: true
-      EnableDnsHostnames: true
-      Tags:
-        - Key: Name
-          Value: !Sub "${EnvironmentName}-VPC"
-        - Key: Environment
-          Value: !Ref EnvironmentName
-
-  InternetGateway:
-    Type: AWS::EC2::InternetGateway
-    Properties:
-      Tags:
-        - Key: Name
-          Value: !Sub "${EnvironmentName}-IGW"
-        - Key: Environment
-          Value: !Ref EnvironmentName
-
-  InternetGatewayAttachment:
-    Type: AWS::EC2::VPCGatewayAttachment
-    Properties:
-      InternetGatewayId: !Ref InternetGateway
-      VpcId: !Ref VPC
-
-  PublicSubnet1:
-    Type: AWS::EC2::Subnet
-    Properties:
-      VpcId: !Ref VPC
-      AvailabilityZone: !Sub "${AWS::Region}a"
-      CidrBlock: !Ref PublicSubnet1CIDR
-      MapPublicIpOnLaunch: true
-      Tags:
-        - Key: Name
-          Value: !Sub "${EnvironmentName}-public-subnet-1"
-        - Key: Environment
-          Value: !Ref EnvironmentName
-        - Key: Subnet
-          Value: !Sub "${EnvironmentName}-subnet-1"
-  
-  PublicSubnet2:
-    Type: AWS::EC2::Subnet
-    Properties:
-      VpcId: !Ref VPC
-      AvailabilityZone: !Sub "${AWS::Region}b"
-      CidrBlock: !Ref PublicSubnet2CIDR
-      MapPublicIpOnLaunch: true
-      Tags:
-        - Key: Name
-          Value: !Sub "${EnvironmentName}-public-subnet-2"
-        - Key: Environment
-          Value: !Ref EnvironmentName
-        - Key: Subnet
-          Value: !Sub "${EnvironmentName}-subnet-2"
-
-  PublicRouteTable:
-    Type: AWS::EC2::RouteTable
-    Properties:
-      VpcId: !Ref VPC
-      Tags:
-        - Key: Name
-          Value: !Sub "${EnvironmentName}-public-rt"
-        - Key: Environment
-          Value: !Ref EnvironmentName
-
-  DefaultPublicRoute:
-    Type: AWS::EC2::Route
-    DependsOn: InternetGatewayAttachment
-    Properties:
-      RouteTableId: !Ref PublicRouteTable
-      DestinationCidrBlock: 0.0.0.0/0
-      GatewayId: !Ref InternetGateway
-
-  PublicSubnet1RouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      RouteTableId: !Ref PublicRouteTable
-      SubnetId: !Ref PublicSubnet1
-
-  PublicSubnet2RouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      RouteTableId: !Ref PublicRouteTable
-      SubnetId: !Ref PublicSubnet2
-
   StateBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -627,39 +525,6 @@ Resources:
       FunctionName: !GetAtt InspectorLambda.Arn
       Principal: sns.amazonaws.com   
 
-  BuildAMI:
-    Type: AWS::CodeBuild::Project
-    Properties:
-        Name: !Sub "${AWS::StackName}-build-ami"
-        Artifacts:
-          Type: CODEPIPELINE
-        Environment:
-          Type: LINUX_CONTAINER
-          ComputeType: BUILD_GENERAL1_SMALL
-          Image: !Ref CodebuildImage
-          EnvironmentVariables:
-            - Name: VPC_ID
-              Type: PLAINTEXT
-              Value: !Ref VPC
-            - Name: AMI_NAME
-              Type: PLAINTEXT
-              Value: !Ref EnvironmentName
-            - Name: REGION
-              Type: PLAINTEXT
-              Value: !Ref AWS::Region
-            - Name: PACKER_FILE
-              Type: PLAINTEXT
-              Value: !Ref PackerFile
-        Source:
-            Type: CODEPIPELINE
-            BuildSpec: ./buildspecs/build-ami-buildspec.yaml
-        ServiceRole: !GetAtt CodeBuildRole.Arn
-        Tags:
-        - Key: Name
-          Value: !Sub "${EnvironmentName}-codebuild-build-ami"
-        - Key: Environment
-          Value: !Ref EnvironmentName
-
   DeployAMI:
     Type: AWS::CodeBuild::Project
     Properties:
@@ -680,9 +545,6 @@ Resources:
             - Name: KEY_PAIR
               Type: PLAINTEXT
               Value: !Ref KeyPair
-            - Name: SUBNET_ID
-              Type: PLAINTEXT
-              Value: !Ref PublicSubnet2
             - Name: SCAN_LENGTH
               Type: PLAINTEXT
               Value: !Ref ScanLength
@@ -746,7 +608,7 @@ Resources:
                 Category: Source
                 Owner: ThirdParty
                 Provider: GitHub
-                Version: 1
+                Version: '1'
               Configuration:
                 Owner: !Ref RepositoryOwner
                 Repo: !Ref RepositoryName
@@ -756,20 +618,6 @@ Resources:
               OutputArtifacts:
                 - Name: SourceCode
               Namespace: SourceVariables
-        - Name: BuildAMI
-          Actions:
-          - Name: BuildAMI
-            ActionTypeId:
-              Category: Build
-              Owner: AWS
-              Provider: CodeBuild
-              Version: 1
-            Configuration:
-                ProjectName: !Ref BuildAMI
-                EnvironmentVariables: '[{"name":"COMMIT_ID","value":"#{SourceVariables.CommitId}","type":"PLAINTEXT"}]'
-            InputArtifacts:
-                - Name: SourceCode
-            Namespace: BuildAMIVariables
         - Name: DeployAMI
           Actions:
           - Name: DeployAMI
@@ -777,7 +625,7 @@ Resources:
               Category: Build
               Owner: AWS
               Provider: CodeBuild
-              Version: 1
+              Version: '1'
             Configuration:
                 ProjectName: !Ref DeployAMI
                 EnvironmentVariables: '[{"name":"COMMIT_ID","value":"#{SourceVariables.CommitId}","type":"PLAINTEXT"}]'
@@ -792,7 +640,7 @@ Resources:
               Category: Build
               Owner: AWS
               Provider: CodeBuild
-              Version: 1
+              Version: '1'
             Configuration:
                 ProjectName: !Ref ScanAMI
                 EnvironmentVariables: '[{"name":"COMMIT_ID","value":"#{SourceVariables.CommitId}","type":"PLAINTEXT"}]'
