@@ -155,7 +155,6 @@ Resources:
               - Sid: iamAccess
                 Effect: Allow
                 Action:
-                  #- iam:*
                   - iam:CreateRole
                   - iam:CreatePolicy
                   - iam:AttachRolePolicy

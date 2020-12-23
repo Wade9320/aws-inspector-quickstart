@@ -35,20 +35,7 @@ Resources:
     Type: AWS::IAM::InstanceProfile
     Properties:
       Roles:
-        - !Ref inspectorInstanceIamRole
-  inspectorIamPolicy:
-    Type: AWS::IAM::Policy
-    Properties:
-      PolicyName: bambooAgentTestingAccess
-      Roles:
-        - !Ref inspectorInstanceIamRole
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Action:
-            - "ec2:DescribeTags"
-            Resource: "*"           
+        - !Ref inspectorInstanceIamRole      
   inspectorInstanceIamRole:
     Type: AWS::IAM::Role
     Properties:
