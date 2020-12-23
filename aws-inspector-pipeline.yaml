@@ -158,6 +158,7 @@ Resources:
                   - iam:CreateRole
                   - iam:AttachRolePolicy
                   - iam:DeleteRole
+                  - iam:DetachRolePolicy
                 Resource:
                   - "*"
               - Sid: ec2Access
