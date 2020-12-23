@@ -67,6 +67,7 @@ Resources:
           sudo yum install -y wget
           wget https://inspector-agent.amazonaws.com/linux/latest/install"
           sudo bash install
+          systemctl start amazon-ssm-agent.service
           exit 0
 
   InspectorResourceGroup:
@@ -74,7 +75,7 @@ Resources:
     Properties: 
       ResourceGroupTags: 
         - Key: Name
-          Value:  !Ref ec2tag
+          Value: !Ref ec2tag
   InspectorAssessmentTarget:
     Type: AWS::Inspector::AssessmentTarget
     Properties: 
