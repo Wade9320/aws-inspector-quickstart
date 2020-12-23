@@ -12,6 +12,9 @@ Parameters:
   networkStackName:
     Type: String
     Default: cfn02-network
+  securityStackName:
+    Type: String
+    Default: cfn03-security
   ec2tag:
     Description: Tag for ec2 instances for scanning
     Type: String
@@ -48,7 +51,8 @@ Resources:
               Service:
                 - ec2.amazonaws.com
       ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore     
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - {"Fn::ImportValue": !Sub "${securityStackName}-${AWS::Region}-puppet-agent-managed-policy"}
 
   InspectorEC2Instance:
     Type: AWS::EC2::Instance
