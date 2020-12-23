@@ -163,6 +163,7 @@ Resources:
                   - iam:AddRoleToInstanceProfile
                   - iam:RemoveRoleFromInstanceProfile
                   - iam:DeleteInstanceProfile
+                  - iam:PassRole
                 Resource:
                   - "*"
               - Sid: ec2Access
