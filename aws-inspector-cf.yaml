@@ -61,7 +61,9 @@ Resources:
       InstanceType: t2.medium
       IamInstanceProfile: !Ref inspectorInstanceProfile
       KeyName: !Ref KeyPair
-      SubnetId: {"Fn::ImportValue": !Sub "${networkStackName}-${AWS::Region}-privateAZaId"}  
+      SubnetId: {"Fn::ImportValue": !Sub "${networkStackName}-${AWS::Region}-privateAZaId"}
+      SecurityGroupIds:
+        - {"Fn::ImportValue": !Sub "${securityStackName}-${AWS::Region}-sgMonitoringRestrictedAccess"}
       Tags:
         - Key: Name
           Value: !Ref ec2tag
