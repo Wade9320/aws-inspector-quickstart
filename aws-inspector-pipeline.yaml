@@ -159,6 +159,10 @@ Resources:
                   - iam:AttachRolePolicy
                   - iam:DeleteRole
                   - iam:DetachRolePolicy
+                  - iam:CreateInstanceProfile
+                  - iam:AddRoleToInstanceProfile
+                  - iam:RemoveRoleFromInstanceProfile
+                  - iam:DeleteInstanceProfile
                 Resource:
                   - "*"
               - Sid: ec2Access
