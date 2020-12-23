@@ -156,6 +156,7 @@ Resources:
                 Effect: Allow
                 Action:
                   - iam:CreateRole
+                  - iam:CreatePolicy
                   - iam:AttachRolePolicy
                   - iam:DeleteRole
                   - iam:DetachRolePolicy
