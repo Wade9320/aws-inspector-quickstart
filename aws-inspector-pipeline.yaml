@@ -162,6 +162,7 @@ Resources:
                   - iam:CreateInstanceProfile
                   - iam:GetRolePolicy
                   - iam:PutRolePolicy
+                  - iam:DeleteRolePolicy
                   - iam:AddRoleToInstanceProfile
                   - iam:RemoveRoleFromInstanceProfile
                   - iam:DeleteInstanceProfile
