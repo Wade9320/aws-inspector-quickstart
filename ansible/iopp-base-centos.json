@@ -1,0 +1,77 @@
+{
+  "variables": {
+      "aws_access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
+      "aws_secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}",
+      "aws_security_token": "{{env `AWS_SECURITY_TOKEN`}}",
+      "created_by": "",
+      "branch_name": ""
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "access_key": "{{user `aws_access_key`}}",
+    "secret_key": "{{user `aws_secret_key`}}",
+    "region": "eu-west-1",
+    "source_ami_filter": { 
+      "filters": { 
+        "product-code": "aw0evgkw8e5c1q413zgy5pjce", 
+        "virtualization-type": "hvm"
+        },
+      "owners": ["aws-marketplace"],
+      "most_recent": true
+      },
+    "instance_type": "t2.micro",
+    "iam_instance_profile": "",
+    "ssh_username": "centos",
+    "ami_name": "centos7-iopp-base-{{user `branch_name`}}-{{isotime | clean_resource_name}}",
+    "ami_description": "centos7-iopp-base-{{user `branch_name`}}-{{isotime | clean_resource_name}}",
+    "ami_users": ["329947603558", "556903690983"],
+    "ssh_interface": "private_ip",
+    "subnet_id": "subnet-2bff525c",
+    "vpc_id": "vpc-5a2fe73f",
+    "launch_block_device_mappings": [
+      {
+        "device_name": "/dev/sda1",
+        "volume_size": 40,
+        "volume_type": "gp2",
+        "delete_on_termination": true
+      }
+    ],
+    "tags": {
+      "Name": "centos7-iopp-base-{{user `branch_name`}}-{{isotime | clean_resource_name}}",
+      "Distribution": "CentOS",
+      "OS_Version": "7",
+      "Publisher": "IOPP",
+      "Created By": "{{user `created_by`}}",
+      "Team": "Infrastructure"
+    }
+  }],
+  "provisioners": [
+    {
+      "type": "shell",
+      "environment_vars": ["PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/opt/aws/ec2-ami-tools/bin"],
+      "inline": [
+          "sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm",
+          "sudo yum install -y ansible",
+          "sudo yum install -y libselinux-python"
+      ]
+    },
+    {
+        "type": "ansible-local",
+        "playbook_dir": "ansible",
+        "playbook_file": "../ansible/playbook.yml"
+    },
+    {
+        "type": "serverspec",
+        "rake_file": "Rakefile",
+        "rake_task": "spec:localhost",
+        "rake_env_vars": "$BUNDLE_GEMFILE=Gemfile"
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "manifest",
+      "output": "manifest.json",
+      "strip_path": true
+    }
+  ]
+}

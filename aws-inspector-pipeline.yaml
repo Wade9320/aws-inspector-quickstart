@@ -156,14 +156,10 @@ Resources:
                 Effect: Allow
                 Action:
                   - iam:CreateRole
-                  - iam:CreatePolicy
                   - iam:AttachRolePolicy
                   - iam:DeleteRole
                   - iam:DetachRolePolicy
                   - iam:CreateInstanceProfile
-                  - iam:GetRolePolicy
-                  - iam:PutRolePolicy
-                  - iam:DeleteRolePolicy
                   - iam:AddRoleToInstanceProfile
                   - iam:RemoveRoleFromInstanceProfile
                   - iam:DeleteInstanceProfile
@@ -313,6 +309,20 @@ Resources:
                   - "ec2:TerminateInstances"
                 Resource:
                   - "*"
+              - Sid: iamAccess
+                Effect: Allow
+                Action:
+                  - iam:CreateRole
+                  - iam:AttachRolePolicy
+                  - iam:DeleteRole
+                  - iam:DetachRolePolicy
+                  - iam:CreateInstanceProfile
+                  - iam:AddRoleToInstanceProfile
+                  - iam:RemoveRoleFromInstanceProfile
+                  - iam:DeleteInstanceProfile
+                  - iam:PassRole
+                Resource:
+                  - "*"                  
               - Sid: cloudformation
                 Effect: Allow
                 Action:
