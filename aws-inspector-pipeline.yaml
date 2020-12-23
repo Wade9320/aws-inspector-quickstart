@@ -155,7 +155,7 @@ Resources:
               - Sid: iamAccess
                 Effect: Allow
                 Action:
-                  - iam:Create*
+                  - iam:CreateRole
                 Resource:
                   - "*"
               - Sid: ec2Access
