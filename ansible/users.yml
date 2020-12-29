@@ -1,0 +1,9 @@
+---
+vars:
+  users:
+    mig:
+      realname: 'migration temporary user'
+      pass: '*'
+      sshkeytype: 'ssh-rsa'
+      sshkey: 'AAAAB3NzaC1yc2EAAAABJQAAAQEAiLQsZuQ8NhHyHercPPBCDwvJw9CnRUXzRKggygzqO/StN4RRW7XHpnEtCxq6NT+aXWKWPo0+hQbxN0srqZhcJ9giCfA+yhpPJlwPqbeocPZX8b03cA0+UZ5PQyUIbG/+SEgmwduMTVjdVtyC1oWYDhWrs/ZAJY/l/xsQr9XI+Is2oRrQQD5KMLtLGyxMlaqtLbI5MFe3xVJtO+Jca/LOSvPY27vDm8qEdHb8kIcDLIq5mR07+xpojYlKlaP5U0iXeoKnLnhplhpUXBLhE9OBz5AbysLF/KUCWAW/8yZA+s7ErXgjVMwj2f1eIqYe47wl3vw7QRvHNosJs9lkxCVarw=='
+      group: 'adm'

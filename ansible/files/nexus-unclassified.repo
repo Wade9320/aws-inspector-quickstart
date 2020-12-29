@@ -1,0 +1,7 @@
+[unclassified]
+name=unclassified
+baseurl=http://kundt.ioppublishing.com:8081/nexus/content/repositories/unclassified
+enabled=1
+protect=0
+gpgcheck=0
+metadata_expire=30

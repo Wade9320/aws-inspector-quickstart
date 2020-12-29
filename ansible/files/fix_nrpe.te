@@ -1,0 +1,14 @@
+module fix_nrpe 1.0;
+
+require {
+	type nagios_checkdisk_plugin_t;
+	type nvme_device_t;
+	type nrpe_t;
+	type nagios_etc_t;
+	class file { getattr open read};
+	class blk_file getattr;
+}
+
+#============= nagios_checkdisk_plugin_t ==============
+allow nagios_checkdisk_plugin_t nvme_device_t:blk_file getattr;
+allow nrpe_t nagios_etc_t:file { getattr open read };

@@ -1,0 +1,11 @@
+module checkfileage 1.0;
+
+require {
+        type nagios_admin_plugin_t;
+        type bin_t;
+        class file { execute open };
+}
+
+#============= nagios_admin_plugin_t ==============
+
+allow nagios_admin_plugin_t bin_t:file execute;

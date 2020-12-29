@@ -1,0 +1,7 @@
+[thirdparty]
+name=ThirdParty
+baseurl=http://kundt.ioppublishing.com:8081/nexus/content/repositories/thirdparty
+enabled=1
+protect=0
+gpgcheck=0
+metadata_expire=30

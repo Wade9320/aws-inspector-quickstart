@@ -1,0 +1,16 @@
+############################################# LEGAL NOTICE #############################################################
+# * This system is owned and operated by IOP Publishing Limited (IOPP). *                                              #
+#                                                                                                                      #
+# - This system is only for users who have been expressly authorised to use it by IOPP.                                #
+# - Usage of this system may be monitored and/or recorded by system personnel.                                         #
+#    Users (authorised or unauthorised) shall have no explicit or implicit expectation of                              #
+#     privacy whilst using this system.                                                                                #
+# - If such monitoring reveals possible evidence of criminal activity, system personnel may                            #
+#    provide all such evidence to law enforcement officials.                                                           #
+# - Unauthorized or improper use of this system may result in disciplinary action, contractual claims,                 #
+#    and/or civil and/or criminal penalties.                                                                           #
+# - Authorized users must read and conform to the IOPP IT Security Policy.                                             #
+#                                                                                                                      #
+# * Continuing to use this system constitutes acceptance of all the above conditions *                                 #
+# * DO NOT ATTEMPT TO LOG IN. LOG OFF IMMEDIATELY if you do not agree to any of the conditions stated in this notice * #
+########################################################################################################################

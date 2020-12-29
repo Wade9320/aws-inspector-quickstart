@@ -1,0 +1,202 @@
+---
+- hosts: all
+  name: Base Ansible Local Build for IOPP
+  become: yes
+
+  tasks:
+  - name: Yum update
+    yum: name=* state=latest
+  - name: Install python-pip
+    package: name=python-pip state=present
+  - name: Install aws cli
+    pip:
+      name: awscli 
+  - name: Install aws cfn-init
+    pip: 
+      name: aws-cfn-bootstrap
+  - name: Dynamic MOTD
+    copy:
+      src: files/motd.sh
+      dest: /usr/local/bin/motd.sh
+      owner: root
+      group: root
+      mode: '0755'
+  - name: Install NTP
+    package: name=ntp state=latest
+  - name: Configure NTP
+    copy:
+      src: files/ntp.conf
+      dest: /etc/ntp.conf
+      owner: root
+      group: root
+      mode: "0644"
+  - name: Ensure NTP Started
+    service:
+      name: ntpd
+      enabled: yes
+  - name: SELinux
+    selinux:
+      policy: targeted
+      state: enforcing
+### Add users
+  - name: include user vars
+    include_vars:
+      file: users.yml
+      name: users
+  - name: create users
+    user:
+      name: "{{ item.key }}"
+      comment: "{{ item.value.realname }}"
+      group: "{{ item.value.group }}"
+      password: "{{ item.value.pass }}"
+      uid: "{{ item.value.uid | default(omit) }}"
+    loop: "{{ users.vars.users|dict2items }}"
+    loop_control:
+      label: "{{ item.key }}"
+  - name: authorized_keys
+    authorized_key:
+      user: "{{ item.key }}"
+      key: "{{ item.value.sshkeytype }} {{ item.value.sshkey }}"
+      manage_dir: yes
+    loop: "{{ users.vars.users|dict2items }}"
+    loop_control:
+      label: "{{ item.key }}"
+  - name: Add user "mig" to sudo
+    lineinfile:
+      path: /etc/sudoers.d/mig
+      line: 'mig ALL=(ALL) NOPASSWD: ALL'
+      state: present
+      mode: 0440
+      create: yes
+      validate: 'visudo -cf %s'
+  - name: iop_rpm
+    copy: 
+      src: files/macros
+      dest: /etc/rpm/macros
+      owner: root
+      group: root
+      mode: '0644'
+  - name: bash_history
+    copy:
+      src: files/bash_history.sh
+      dest: /etc/profile.d/bash_history.sh
+      owner: root
+      group: root
+      mode: '0755'
+  - name: create banner file
+    copy:
+      dest: /etc/ssh/iopp_ssh_banner
+      src: files/system_use_banner.txt
+  - name: enable banner
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^#Banner*'
+      line: Banner /etc/ssh/iopp_ssh_banner
+    register: banner_update
+  - name: Install nrpe packages
+    package: name={{ item }} state=present
+    with_items:
+    - nrpe-selinux
+    - nagios-plugins-all
+  - name: Install nrpe config
+    copy:
+      src: files/nrpe.cfg
+      dest: /etc/nagios/nrpe.cfg
+      owner: root
+      group: root
+      mode: '0644'
+  - name: Copy fix_nrpe.te selinux module
+    when: ansible_facts['os_family'] == "CentOS"  
+    copy:
+      src: files/fix_nrpe.te
+      dest: /tmp/fix_nrpe.te
+      owner: root
+      group: root
+      mode: '0644'
+  - name: Compile nrpe fix_nrpe.mod selinux module
+    when: ansible_facts['os_family'] == "CentOS"
+    command:
+      cmd: checkmodule -M -m -o /tmp/fix_nrpe.mod /tmp/fix_nrpe.te
+  - name: Compile nrpe fix_nrpe.pp selinux module
+    when: ansible_facts['os_family'] == "CentOS"
+    command:
+      cmd: semodule_package -o /tmp/fix_nrpe.pp -m /tmp/fix_nrpe.mod
+  - name: Install nrpe fix_nrpe.pp selinux module
+    when: ansible_facts['os_family'] == "CentOS"
+    command:
+      cmd: semodule -i /tmp/fix_nrpe.pp
+  - name: Copy checkfileage.te selinux module
+    when: ansible_facts['os_family'] == "CentOS"
+    copy:
+      src: files/checkfileage.te
+      dest: /tmp/checkfileage.te
+      owner: root
+      group: root
+      mode: '0644'
+  - name: Compile nrpe checkfileage.mod selinux module
+    when: ansible_facts['os_family'] == "CentOS"
+    command:
+      cmd: checkmodule -M -m -o /tmp/checkfileage.mod /tmp/checkfileage.te
+  - name: Compile nrpe checkfileage.pp selinux module
+    when: ansible_facts['os_family'] == "CentOS"  
+    command:
+      cmd: semodule_package -o /tmp/checkfileage.pp -m /tmp/checkfileage.mod
+  - name: Install nrpe checkfileage.mod selinux module
+    when: ansible_facts['os_family'] == "CentOS"
+    command:
+      cmd: semodule -i /tmp/checkfileage.pp
+  - name: Ensure nrpe start on boot
+    service:
+      name: nrpe
+      enabled: yes
+  - name: Install memory check script
+    copy:
+      src: files/check_mem.pl
+      dest: /usr/lib64/nagios/plugins/check_mem.pl
+      owner: root
+      group: root
+      mode: '0755'
+  - name: Install yum check script
+    copy:
+      src: files/check_yum.py
+      dest: /usr/lib64/nagios/plugins/check_yum.py
+      owner: root
+      group: root
+      mode: '0755'
+  - name: Install yum check script
+    copy:
+      src: files/check_cpu_linux.py
+      dest: /usr/lib64/nagios/plugins/check_cpu_linux.py
+      owner: root
+      group: root
+      mode: '0755'      
+  - name: Stop and disable postfix
+    service:
+      name: postfix
+      state: stopped
+      enabled: no
+  - name: Install logrotate
+    package: name=logrotate state=present
+  - name: Set timezone to Europe/London
+    timezone:
+      name: Europe/London
+  - name: Nexus Third-Party
+    copy:
+      src: files/nexus-thirdparty.repo
+      dest: /etc/yum.repos.d/nexus-thirdparty.repo
+      owner: root
+      group: root
+      mode: '0644'
+  - name: Nexus Unclassified
+    copy:
+      src: files/nexus-unclassified.repo
+      dest: /etc/yum.repos.d/nexus-unclassified.repo
+      owner: root
+      group: root
+      mode: '0644'       
+  - name: Install cloudwatch agent 
+    command:
+      cmd: yum install -y https://s3.amazonaws.com/amazoncloudwatch-agent/centos/amd64/latest/amazon-cloudwatch-agent.rpm
+  - name: Install SSM agent
+    command: 
+      cmd: yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm

@@ -59,12 +59,6 @@
         "type": "ansible-local",
         "playbook_dir": "ansible",
         "playbook_file": "../ansible/playbook.yml"
-    },
-    {
-        "type": "serverspec",
-        "rake_file": "Rakefile",
-        "rake_task": "spec:localhost",
-        "rake_env_vars": "$BUNDLE_GEMFILE=Gemfile"
     }
   ],
   "post-processors": [

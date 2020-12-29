@@ -9,11 +9,11 @@ phases:
       - apt-get install wget unzip -y
       - export PACKER_RELEASE="1.6.6"
       - wget https://releases.hashicorp.com/packer/${PACKER_RELEASE}/packer_${PACKER_RELEASE}_linux_amd64.zip
-      - unzip packer_${PACKER_RELEASE}_linux_amd64.zip
+      - unzip -f packer_${PACKER_RELEASE}_linux_amd64.zip
       - mv packer /usr/local/bin
       - pip install --upgrade pip
       - pip install --upgrade awscli
   build:
     commands:
       - echo "Hello Inspector"
-      - packer build -var 'created-by=codepipeline' -var "branch_name=$GIT_BRANCH" iopp-base-ami.json
+      - packer build -var 'created-by=codepipeline' -var "branch_name=$GIT_BRANCH" packer/iopp-base-ami.json
