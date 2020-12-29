@@ -21,7 +21,10 @@ phases:
       - pwd
       - ls
       - unzip packer.zip
-      - echo "Validating Packer template"
+      - pwd
+      - ls
+      - ls packer      
+      - echo "Validating Packer template"      
       - ./packer validate packer-files/iopp-base-ami.json     
       - pip install --upgrade pip
       - pip install --upgrade awscli
