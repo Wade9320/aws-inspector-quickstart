@@ -23,7 +23,9 @@ phases:
       - unzip packer.zip
       - pwd
       - ls
-      - ls packer      
+      - chown root:root packer
+      - chown 777 packer
+      - ls -lash packer
       - echo "Validating Packer template"      
       - ./packer validate packer-files/iopp-base-ami.json     
       - pip install --upgrade pip
