@@ -15,7 +15,7 @@ phases:
       #- chown 777 /usr/local/bin/packer
       #- /usr/local/bin/packer -version
       - echo "Installing HashiCorp Packer..."
-      - curl -qL -o packer.zip https://releases.hashicorp.com/packer/0.12.3/packer_0.12.3_linux_amd64.zip && unzip packer.zip
+      - curl -qL -o packer.zip https://releases.hashicorp.com/packer/${PACKER_RELEASE}/packer_${PACKER_RELEASE}_linux_amd64.zip && unzip packer.zip
       - echo "Installing jq..."
       - curl -qL -o jq https://stedolan.github.io/jq/download/linux64/jq && chmod +x ./jq
       - echo "Validating amazon-linux_packer-template.json"
