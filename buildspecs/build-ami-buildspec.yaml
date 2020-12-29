@@ -16,5 +16,5 @@ phases:
       - pip install --upgrade awscli
   build:
     commands:
-      - echo "Hello Inspector"
+      - echo "Packer build"
       - ./packer build -var 'created_by=codepipeline' -var "branch_name=$GIT_BRANCH" packer-files/iopp-base-centos.json
