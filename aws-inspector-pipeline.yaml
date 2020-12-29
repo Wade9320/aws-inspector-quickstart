@@ -432,7 +432,7 @@ Resources:
               current_date = dt.now().strftime("%m-%d-%Y")
 
               report_to_upload = open(temp_file, "rb")
-              s3_report_key = current_date + "/" + user_attributes["CommitId"] + "/" + report_name
+              s3_report_key = current_date + "/" + user_attributes["branchName"] + "/" + report_name
               s3_response = s3Client.put_object(
                   Bucket=reports_bucket,
                   Key=s3_report_key,
@@ -500,6 +500,29 @@ Resources:
       FunctionName: !GetAtt InspectorLambda.Arn
       Principal: sns.amazonaws.com   
 
+  BuildAMI:
+    Type: AWS::CodeBuild::Project
+    Properties:
+        Name: !Sub "${AWS::StackName}-build-ami"
+        Artifacts:
+          Type: CODEPIPELINE
+        Environment:
+          Type: LINUX_CONTAINER
+          ComputeType: BUILD_GENERAL1_SMALL
+          Image: !Ref CodebuildImage
+          EnvironmentVariables:
+            - Name: REGION
+              Type: PLAINTEXT
+              Value: !Ref AWS::Region
+        Source:
+            Type: CODEPIPELINE
+            BuildSpec: ./buildspecs/build-ami-buildspec.yaml
+        ServiceRole: !GetAtt CodeBuildRole.Arn
+        Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName}-codebuild-build-ami"
+        - Key: Environment
+          Value: !Ref EnvironmentName
   DeployAMI:
     Type: AWS::CodeBuild::Project
     Properties:
@@ -532,7 +555,6 @@ Resources:
           Value: !Sub "${EnvironmentName}-codebuild-deploy-ami"
         - Key: Environment
           Value: !Ref EnvironmentName
-
   ScanAMI:
     Type: AWS::CodeBuild::Project
     Properties:
@@ -577,8 +599,7 @@ Resources:
       Stages:
         - Name: Source
           Actions:
-            -
-              Name: SourceAction
+            - Name: SourceAction
               ActionTypeId:
                 Category: Source
                 Owner: ThirdParty
@@ -603,7 +624,7 @@ Resources:
               Version: '1'
             Configuration:
                 ProjectName: !Ref DeployAMI
-                EnvironmentVariables: '[{"name":"COMMIT_ID","value":"#{SourceVariables.CommitId}","type":"PLAINTEXT"}]'
+                EnvironmentVariables: '[{"name":"BRANCH_NAME","value":"#{SourceVariables.BranchName}","type":"PLAINTEXT"}]'
             InputArtifacts:
                 - Name: SourceCode
             Namespace: DeployAMIVariables
@@ -618,11 +639,22 @@ Resources:
               Version: '1'
             Configuration:
                 ProjectName: !Ref ScanAMI
-                EnvironmentVariables: '[{"name":"COMMIT_ID","value":"#{SourceVariables.CommitId}","type":"PLAINTEXT"}]'
+                EnvironmentVariables: '[{"name":"BRANCH_NAME","value":"#{SourceVariables.BranchName}","type":"PLAINTEXT"}]'
             InputArtifacts:
                 - Name: SourceCode
             Namespace: ScanAMIVariables
             RunOrder: 1
+
+  # triggerPipelineCloudWatch:
+  #   Type: AWS::Events::Rule
+  #   Properties: 
+  #     Description: triggerBaseAmiPipeline
+  #     Name: String
+  #     RoleArn: String
+  #     ScheduleExpression: cron(0 06 ? * MON *)
+  #     State: ENABLED
+  #     Targets: 
+  #       - !Ref Codepipeline
 
 Outputs:
   NotificationSNS:

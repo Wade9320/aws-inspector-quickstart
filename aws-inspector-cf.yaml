@@ -22,7 +22,7 @@ Parameters:
     Type: Number
     Description: Duration of Inspector Scan in seconds
     Default: 180
-  CommitId:
+  branchName:
     Type: String
     Description: Duration of Inspector Scan in seconds
 
@@ -101,8 +101,8 @@ Resources:
           Value: !Ref ec2tag
         - Key: StackName
           Value: !Ref "AWS::StackName"
-        - Key: CommitId
-          Value: !Ref CommitId
+        - Key: branchName
+          Value: !Ref branchName
         - Key: AMI_ID
           Value: !Ref AMI
 
@@ -116,6 +116,6 @@ Outputs:
   AssessmentTemplate:
     Description: Inspector Assessment Template
     Value: !GetAtt InspectorAssessmentTemplate.Arn
-  CommitId:
-    Description: Commit Id
-    Value: !Ref CommitId
+  branchName:
+    Description: Branch Name
+    Value: !Ref branchName

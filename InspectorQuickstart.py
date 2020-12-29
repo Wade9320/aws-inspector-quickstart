@@ -10,9 +10,9 @@ class InspectorQuickstart:
         self.inspectorClient = boto3.client('inspector')
         self.cloudformationClient = boto3.client('cloudformation')
         self.stack_name = os.environ["STACK_NAME"]
-        self.commit_id = os.environ["COMMIT_ID"]
+        self.branch_name = os.environ["BRANCH_NAME"]
         self.topic_arn = os.environ["SNS_TOPIC_ARN"]
-        self.full_stack_name = self.stack_name + "-" + self.commit_id
+        self.full_stack_name = self.stack_name + "-" + self.branch_name
         self.inspector_stack_output = self.get_stack_outputs()
     
     def get_stack_outputs(self):

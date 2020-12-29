@@ -51,7 +51,7 @@ def download_report(url, user_attributes):
     current_date = dt.now().strftime("%m-%d-%Y")
 
     report_to_upload = open(temp_file, "rb")
-    s3_report_key = current_date + "/" + user_attributes["CommitId"] + "/" + report_name
+    s3_report_key = current_date + "/" + user_attributes["branchName"] + "/" + report_name
     s3_response = s3Client.put_object(
         Bucket=reports_bucket,
         Key=s3_report_key,
