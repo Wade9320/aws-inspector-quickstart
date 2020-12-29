@@ -660,7 +660,6 @@ Resources:
                 - Name: SourceCode
             Namespace: ScanAMIVariables
             RunOrder: 1
-
   # triggerPipelineCloudWatch:
   #   Type: AWS::Events::Rule
   #   Properties: 
