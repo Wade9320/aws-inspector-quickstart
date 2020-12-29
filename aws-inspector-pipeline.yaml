@@ -28,6 +28,9 @@ Parameters:
     Type: Number
     Description: Duration of Inspector Scan in seconds
     Default: 180
+  networkStackName:
+    Type: String
+    Default: cfn02-network
 
 Resources:
   StateBucket:
@@ -541,6 +544,10 @@ Resources:
           Value: !Sub "${EnvironmentName}-codebuild-build-ami"
         - Key: Environment
           Value: !Ref EnvironmentName
+        VpcConfig:
+          Subnets: 
+            - {"Fn::ImportValue": !Sub "${networkStackName}-${AWS::Region}-privateAZaId"}
+          VpcId: {"Fn::ImportValue": !Sub "${networkStackName}-${AWS::Region}-vpcId"}          
   DeployAMI:
     Type: AWS::CodeBuild::Project
     Properties:
