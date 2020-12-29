@@ -614,6 +614,20 @@ Resources:
               OutputArtifacts:
                 - Name: SourceCode
               Namespace: SourceVariables
+        - Name: BuildAMI
+          Actions:
+          - Name: BuildAMI
+            ActionTypeId:
+              Category: Build
+              Owner: AWS
+              Provider: CodeBuild
+              Version: '1'
+            Configuration:
+                ProjectName: !Ref BuildAMI
+                EnvironmentVariables: '[{"name":"BRANCH_NAME","value":"#{SourceVariables.BranchName}","type":"PLAINTEXT"}]'
+            InputArtifacts:
+                - Name: SourceCode
+            Namespace: BuildAMIVariables        
         - Name: DeployAMI
           Actions:
           - Name: DeployAMI
