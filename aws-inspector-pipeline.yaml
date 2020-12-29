@@ -31,6 +31,9 @@ Parameters:
   networkStackName:
     Type: String
     Default: cfn02-network
+  securityStackName:
+    Type: String
+    Default: cfn03-security
 
 Resources:
   StateBucket:
@@ -545,6 +548,8 @@ Resources:
         - Key: Environment
           Value: !Ref EnvironmentName
         VpcConfig:
+          SecurityGroupIds:
+            - {"Fn::ImportValue": !Sub "${securityStackName}-${AWS::Region}-sgMonitoringRestrictedAccess"}
           Subnets: 
             - {"Fn::ImportValue": !Sub "${networkStackName}-${AWS::Region}-privateAZaId"}
           VpcId: {"Fn::ImportValue": !Sub "${networkStackName}-${AWS::Region}-vpcId"}          
