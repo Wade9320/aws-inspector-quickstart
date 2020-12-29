@@ -2,29 +2,26 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: "AWS-Inspector-Pipeline"
 
 Parameters:
-  GitHubToken:
+  githubToken:
     Type: String
     NoEcho: true
-  RepositoryName:
+  repoName:
     Type: String
     NoEcho: true
-  RepositoryOwner:
+  repoOwner:
     Type: String
     NoEcho: true
-  BranchName:
+  branchName:
     Type: String
     Default: "master"
-  CodebuildImage:
+  codebuildImage:
     Type: String
     Default: "aws/codebuild/standard:4.0"
-  EnvironmentName:
-    Type: String
-    Default: "InspectorQuickstart"
-  KeyPair:
+  keyPair:
     Description: Key pair to launch ec2 instance
     Type: String
     Default: iopp-poc1
-  ScanLength:
+  scanLength:
     Type: Number
     Description: Duration of Inspector Scan in seconds
     Default: 180
@@ -41,26 +38,20 @@ Resources:
     Properties:
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-codepipeline-state-bucket"
-        - Key: Environment
-          Value: !Ref EnvironmentName
+          Value: !Sub "${AWS::StackName}-codepipeline-state-bucket"
   ReportsBucket:
     Type: AWS::S3::Bucket
     Properties:
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-codepipeline-reports-bucket"
-        - Key: Environment
-          Value: !Ref EnvironmentName
+          Value: !Sub "${AWS::StackName}-codepipeline-reports-bucket"
 
   InspectorTopic:
     Type: AWS::SNS::Topic
     Properties:
       Tags: 
         - Key: Name
-          Value: !Sub "${EnvironmentName}-codepipeline-inspector-sns-topic"
-        - Key: Environment
-          Value: !Ref EnvironmentName
+          Value: !Sub "${AWS::StackName}-codepipeline-inspector-sns-topic"
       Subscription:
         - Protocol: lambda
           Endpoint: !GetAtt InspectorLambda.Arn
@@ -84,9 +75,7 @@ Resources:
     Properties:
       Tags: 
         - Key: Name
-          Value: !Sub "${EnvironmentName}-codepipeline-scan-complete-sns-topic"
-        - Key: Environment
-          Value: !Ref EnvironmentName
+          Value: !Sub "${AWS::StackName}-codepipeline-scan-complete-sns-topic"
 
   CodepipelineRole:
     Type: AWS::IAM::Role
@@ -124,10 +113,7 @@ Resources:
                   - !Sub "arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:project/${AWS::StackName}-tear-down-ami"
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-codepipeline-role"
-        - Key: Environment
-          Value: !Ref EnvironmentName
-
+          Value: !Sub "${AWS::StackName}-codepipeline-role"
   CodeBuildRole:
     Type: AWS::IAM::Role
     Properties:
@@ -259,10 +245,7 @@ Resources:
                   - "*"
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-codebuild-role"
-        - Key: Environment
-          Value: !Ref EnvironmentName
-
+          Value: !Sub "${AWS::StackName}-codebuild-role"
   LambdaRole:
     Type: AWS::IAM::Role
     Properties:
@@ -394,9 +377,7 @@ Resources:
                   - !Ref InspectorScanCompleteTopic
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-lambda-role"
-        - Key: Environment
-          Value: !Ref EnvironmentName
+          Value: !Sub "${AWS::StackName}-lambda-role"
   
   InspectorLambda:
     Type: AWS::Lambda::Function
@@ -513,9 +494,7 @@ Resources:
       Runtime: python3.7
       Tags: 
         - Key: Name
-          Value: !Sub "${EnvironmentName}-lambda"
-        - Key: Environment
-          Value: !Ref EnvironmentName
+          Value: !Sub "${AWS::StackName}-lambda"
       Timeout: 600
   SNSLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -533,7 +512,7 @@ Resources:
         Environment:
           Type: LINUX_CONTAINER
           ComputeType: BUILD_GENERAL1_SMALL
-          Image: !Ref CodebuildImage
+          Image: !Ref codebuildImage
           EnvironmentVariables:
             - Name: REGION
               Type: PLAINTEXT
@@ -544,9 +523,7 @@ Resources:
         ServiceRole: !GetAtt CodeBuildRole.Arn
         Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-codebuild-build-ami"
-        - Key: Environment
-          Value: !Ref EnvironmentName
+          Value: !Sub "${AWS::StackName}-codebuild-build-ami"
         VpcConfig:
           SecurityGroupIds:
             - {"Fn::ImportValue": !Sub "${securityStackName}-${AWS::Region}-sgMonitoringRestrictedAccess"}
@@ -562,7 +539,7 @@ Resources:
         Environment:
           Type: LINUX_CONTAINER
           ComputeType: BUILD_GENERAL1_SMALL
-          Image: !Ref CodebuildImage
+          Image: !Ref codebuildImage
           EnvironmentVariables:
             - Name: ACCOUNT_ID
               Type: PLAINTEXT
@@ -572,19 +549,17 @@ Resources:
               Value: !Ref AWS::StackName
             - Name: KEY_PAIR
               Type: PLAINTEXT
-              Value: !Ref KeyPair
+              Value: !Ref keyPair
             - Name: SCAN_LENGTH
               Type: PLAINTEXT
-              Value: !Ref ScanLength
+              Value: !Ref scanLength
         Source:
             Type: CODEPIPELINE
             BuildSpec: ./buildspecs/deploy-ami-buildspec.yaml
         ServiceRole: !GetAtt CodeBuildRole.Arn
         Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-codebuild-deploy-ami"
-        - Key: Environment
-          Value: !Ref EnvironmentName
+          Value: !Sub "${AWS::StackName}-codebuild-deploy-ami"
   ScanAMI:
     Type: AWS::CodeBuild::Project
     Properties:
@@ -594,7 +569,7 @@ Resources:
         Environment:
           Type: LINUX_CONTAINER
           ComputeType: BUILD_GENERAL1_SMALL
-          Image: !Ref CodebuildImage
+          Image: !Ref codebuildImage
           EnvironmentVariables:
             - Name: STACK_NAME
               Type: PLAINTEXT
@@ -608,9 +583,7 @@ Resources:
         ServiceRole: !GetAtt CodeBuildRole.Arn
         Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-codebuild-scan-ami"
-        - Key: Environment
-          Value: !Ref EnvironmentName
+          Value: !Sub "${AWS::StackName}-codebuild-scan-ami"
 
   Codepipeline:
     Type: AWS::CodePipeline::Pipeline
@@ -623,9 +596,7 @@ Resources:
       RoleArn: !GetAtt CodepipelineRole.Arn
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-codepipeline"
-        - Key: Environment
-          Value: !Ref EnvironmentName
+          Value: !Sub "${AWS::StackName}-codepipeline"
       Stages:
         - Name: Source
           Actions:
@@ -636,10 +607,10 @@ Resources:
                 Provider: GitHub
                 Version: '1'
               Configuration:
-                Owner: !Ref RepositoryOwner
-                Repo: !Ref RepositoryName
-                Branch: !Ref BranchName
-                OAuthToken: !Ref GitHubToken
+                Owner: !Ref repoOwner
+                Repo: !Ref repoName
+                Branch: !Ref branchName
+                OAuthToken: !Ref githubToken
                 PollForSourceChanges: true
               OutputArtifacts:
                 - Name: SourceCode
@@ -654,7 +625,7 @@ Resources:
               Version: '1'
             Configuration:
                 ProjectName: !Ref BuildAMI
-                EnvironmentVariables: '[{"name":"BRANCH_NAME","value":"#{SourceVariables.BranchName}","type":"PLAINTEXT"}]'
+                EnvironmentVariables: '[{"name":"BRANCH_NAME","value":"#{SourceVariables.branchName}","type":"PLAINTEXT"}]'
             InputArtifacts:
                 - Name: SourceCode
             Namespace: BuildAMIVariables        
@@ -668,7 +639,7 @@ Resources:
               Version: '1'
             Configuration:
                 ProjectName: !Ref DeployAMI
-                EnvironmentVariables: '[{"name":"BRANCH_NAME","value":"#{SourceVariables.BranchName}","type":"PLAINTEXT"}]'
+                EnvironmentVariables: '[{"name":"BRANCH_NAME","value":"#{SourceVariables.branchName}","type":"PLAINTEXT"}]'
             InputArtifacts:
                 - Name: SourceCode
             Namespace: DeployAMIVariables
@@ -683,7 +654,7 @@ Resources:
               Version: '1'
             Configuration:
                 ProjectName: !Ref ScanAMI
-                EnvironmentVariables: '[{"name":"BRANCH_NAME","value":"#{SourceVariables.BranchName}","type":"PLAINTEXT"}]'
+                EnvironmentVariables: '[{"name":"BRANCH_NAME","value":"#{SourceVariables.branchName}","type":"PLAINTEXT"}]'
             InputArtifacts:
                 - Name: SourceCode
             Namespace: ScanAMIVariables
