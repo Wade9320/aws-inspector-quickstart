@@ -16,4 +16,5 @@ phases:
   build:
     commands:
       - echo "Hello Inspector"
+      - whoami
       - packer build -var 'created-by=codepipeline' -var "branch_name=$GIT_BRANCH" packer/iopp-base-ami.json
