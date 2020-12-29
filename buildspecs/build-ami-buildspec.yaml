@@ -18,19 +18,16 @@ phases:
       # - ./packer validate packer/iopp-base-ami.json     
       - echo "Installing Packer"
       - curl -o packer.zip https://releases.hashicorp.com/packer/1.6.6/packer_1.6.6_linux_amd64.zip
-      - pwd
-      - ls
       - unzip packer.zip
-      - pwd
-      - ls
       - chown root:root packer
       - chown 777 packer
       - ls -lash packer
-      - echo "Validating Packer template"      
-      - ./packer validate packer-files/iopp-base-ami.json     
+      - echo "Validating Packer template" 
+      - ./packer version     
+      - ./packer validate packer-files/iopp-base-centos.json     
       - pip install --upgrade pip
       - pip install --upgrade awscli
   build:
     commands:
       - echo "Hello Inspector"
-      - packer build -var 'created-by=codepipeline' -var "branch_name=$GIT_BRANCH" packer-files/iopp-base-ami.json
+      - packer build -var 'created-by=codepipeline' -var "branch_name=$GIT_BRANCH" packer-files/iopp-base-centos.json
