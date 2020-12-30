@@ -55,7 +55,7 @@ Resources:
   InspectorEC2Instance:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: !Ref AMI
+      ImageId: !Ref amiId
       InstanceType: t2.medium
       IamInstanceProfile: !Ref inspectorInstanceProfile
       KeyName: !Ref KeyPair
@@ -100,7 +100,7 @@ Resources:
         - Key: branchName
           Value: !Ref branchName
         - Key: AMI_ID
-          Value: !Ref AMI
+          Value: !Ref amiId
 
 Outputs:
   ResourceGroup:
