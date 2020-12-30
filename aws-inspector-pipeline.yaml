@@ -184,6 +184,7 @@ Resources:
                   - ec2:DescribeRegions
                   - ec2:DescribeSecurityGroups
                   - ec2:DescribeSnapshots
+                  - ec2:DescribeVpcs
                   - ec2:DescribeSubnets
                   - ec2:DescribeTags
                   - ec2:DescribeVolumes
