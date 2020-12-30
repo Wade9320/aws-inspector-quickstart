@@ -199,6 +199,22 @@ Resources:
                   - ec2:TerminateInstances
                 Resource:
                   - "*"
+              - Sid: ec2NetworkAccess
+                Effect: Allow
+                Action:
+                  - ec2:CreateNetworkInterfacePermission
+                Resource: !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:network-interface/*"
+                Condition:
+                  StringEquals:
+                    ec2:Subnet: !Join 
+                      - ''
+                      - - 'arn:aws:ec2:'
+                        - !Ref AWS::Region
+                        - ':'
+                        - !Ref AWS::AccountId
+                        - ':'
+                        - {"Fn::ImportValue": !Sub "${networkStackName}-${AWS::Region}-privateAZaId"}
+                    ec2:AuthorizedService: codebuild.amazonaws.com
               - Sid: cloudwatch
                 Effect: Allow
                 Action:
