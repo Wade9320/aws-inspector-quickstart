@@ -626,7 +626,7 @@ Resources:
               Version: '1'
             Configuration:
                 ProjectName: !Ref BuildAMI
-                EnvironmentVariables: '[{"name":"BRANCH_NAME","value":"#{SourceVariables.branchName}","type":"PLAINTEXT"}]'
+                EnvironmentVariables: '[{"name":"BRANCH_NAME","value":"#{SourceVariables.BranchName}","type":"PLAINTEXT"}]'
             InputArtifacts:
                 - Name: SourceCode
             Namespace: BuildAMIVariables        
@@ -640,7 +640,7 @@ Resources:
               Version: '1'
             Configuration:
                 ProjectName: !Ref DeployAMI
-                EnvironmentVariables: '[{"name":"BRANCH_NAME","value":"#{SourceVariables.branchName}","type":"PLAINTEXT"}]'
+                EnvironmentVariables: '[{"name":"BRANCH_NAME","value":"#{SourceVariables.BranchName}","type":"PLAINTEXT"}]'
             InputArtifacts:
                 - Name: SourceCode
             Namespace: DeployAMIVariables
@@ -655,7 +655,7 @@ Resources:
               Version: '1'
             Configuration:
                 ProjectName: !Ref ScanAMI
-                EnvironmentVariables: '[{"name":"BRANCH_NAME","value":"#{SourceVariables.branchName}","type":"PLAINTEXT"}]'
+                EnvironmentVariables: '[{"name":"BRANCH_NAME","value":"#{SourceVariables.BranchName}","type":"PLAINTEXT"}]'
             InputArtifacts:
                 - Name: SourceCode
             Namespace: ScanAMIVariables
