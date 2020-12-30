@@ -200,3 +200,9 @@
   - name: Install SSM agent
     command: 
       cmd: yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+  - name: Install Inspector Agent
+    command: 
+      cmd: |
+          sudo yum install -y wget
+          wget https://inspector-agent.amazonaws.com/linux/latest/install"
+          sudo bash install
