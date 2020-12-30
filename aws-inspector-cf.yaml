@@ -71,9 +71,6 @@ Resources:
         Fn::Base64: |+
           !#/bin/bash
           sudo yum update -y
-          sudo yum install -y wget
-          wget https://inspector-agent.amazonaws.com/linux/latest/install"
-          sudo bash install
           systemctl start amazon-ssm-agent.service
           exit 0
 
