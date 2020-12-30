@@ -3,7 +3,7 @@ Description: "AWS-Inspector-Quickstart"
 
 Parameters:
   amiId:
-    Type: String
+    Type: AWS::EC2::Image::Id
   KeyPair:
     Description: Key pair to launch ec2 instance
     Type: String
