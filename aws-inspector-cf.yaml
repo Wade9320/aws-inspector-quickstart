@@ -15,10 +15,10 @@ Parameters:
   securityStackName:
     Type: String
     Default: cfn03-security
-  ec2tag:
+  instanceName:
     Description: Tag for ec2 instances for scanning
     Type: String
-  ScanLength:
+  scanLength:
     Type: Number
     Description: Duration of Inspector Scan in seconds
     Default: 180
@@ -66,12 +66,13 @@ Resources:
         - {"Fn::ImportValue": !Sub "${securityStackName}-${AWS::Region}-sgMonitoringRestrictedAccess"}
       Tags:
         - Key: Name
-          Value: !Ref ec2tag
+          Value: !Ref instanceName
       UserData:
         Fn::Base64: |+
           !#/bin/bash
           sudo yum update -y
           systemctl start amazon-ssm-agent.service
+          systemctl status awsagent.service
           exit 0
 
   InspectorResourceGroup:
@@ -79,7 +80,7 @@ Resources:
     Properties: 
       ResourceGroupTags: 
         - Key: Name
-          Value: !Ref ec2tag
+          Value: !Ref instanceName
   InspectorAssessmentTarget:
     Type: AWS::Inspector::AssessmentTarget
     Properties: 
@@ -88,14 +89,14 @@ Resources:
     Type: AWS::Inspector::AssessmentTemplate
     Properties: 
       AssessmentTargetArn: !Ref InspectorAssessmentTarget
-      DurationInSeconds: !Ref ScanLength
+      DurationInSeconds: !Ref scanLength
       RulesPackageArns: 
         - !FindInMap [RegionMap, !Ref "AWS::Region", CommonVul]
         - !FindInMap [RegionMap, !Ref "AWS::Region", CIS]
         - !FindInMap [RegionMap, !Ref "AWS::Region", SecurityBest]
       UserAttributesForFindings: 
         - Key: Name
-          Value: !Ref ec2tag
+          Value: !Ref instanceName
         - Key: StackName
           Value: !Ref "AWS::StackName"
         - Key: branchName
