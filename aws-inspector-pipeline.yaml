@@ -553,9 +553,6 @@ Resources:
             - Name: ACCOUNT_ID
               Type: PLAINTEXT
               Value: !Ref AWS::AccountId
-            - Name: STACK_NAME
-              Type: PLAINTEXT
-              Value: !Ref AWS::StackName
             - Name: KEY_PAIR
               Type: PLAINTEXT
               Value: !Ref keyPair

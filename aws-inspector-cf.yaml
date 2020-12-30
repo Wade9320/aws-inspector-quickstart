@@ -2,9 +2,8 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: "AWS-Inspector-Quickstart"
 
 Parameters:
-  AMI:
-    Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
-    Default: '/infrastructure/base-ami'
+  amiId:
+    Type: String
   KeyPair:
     Description: Key pair to launch ec2 instance
     Type: String
@@ -24,7 +23,6 @@ Parameters:
     Default: 180
   branchName:
     Type: String
-    Description: Duration of Inspector Scan in seconds
 
 Mappings: 
   RegionMap:
