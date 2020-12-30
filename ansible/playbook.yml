@@ -8,6 +8,8 @@
     yum: name=* state=latest
   - name: Install python-pip
     package: name=python-pip state=present
+  - name: Install wget
+    package: name=wget state=latest
   - name: Install aws cli
     pip:
       name: awscli 
@@ -200,9 +202,10 @@
   - name: Install SSM agent
     command: 
       cmd: yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+  - name: Download Inspector agent
+    get_url:
+      url: https://inspector-agent.amazonaws.com/linux/latest/install
+      dest: /tmp/install
   - name: Install Inspector Agent
     command: 
-      cmd: |
-          sudo yum install -y wget
-          wget https://inspector-agent.amazonaws.com/linux/latest/install"
-          sudo bash install
+      cmd: bash /tmp/install
