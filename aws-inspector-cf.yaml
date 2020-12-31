@@ -4,7 +4,7 @@ Description: "AWS-Inspector-Quickstart"
 Parameters:
   amiId:
     Type: AWS::EC2::Image::Id
-  KeyPair:
+  keyPair:
     Description: Key pair to launch ec2 instance
     Type: String
     Default: iopp-poc1
@@ -16,6 +16,8 @@ Parameters:
     Default: cfn03-security
   instanceName:
     Description: Tag for ec2 instances for scanning
+    Type: String
+  createdBy:
     Type: String
   scanLength:
     Type: Number
@@ -58,13 +60,17 @@ Resources:
       ImageId: !Ref amiId
       InstanceType: t2.medium
       IamInstanceProfile: !Ref inspectorInstanceProfile
-      KeyName: !Ref KeyPair
+      KeyName: !Ref keyPair
       SubnetId: {"Fn::ImportValue": !Sub "${networkStackName}-${AWS::Region}-privateAZaId"}
       SecurityGroupIds:
         - {"Fn::ImportValue": !Sub "${securityStackName}-${AWS::Region}-sgMonitoringRestrictedAccess"}
       Tags:
         - Key: Name
           Value: !Ref instanceName
+        - Key: Team
+          Value: Infrastructure
+        - Key: Created By
+          Value: !Ref createdBy
       UserData:
         Fn::Base64: |+
           !#/bin/bash

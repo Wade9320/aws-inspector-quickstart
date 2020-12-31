@@ -17,4 +17,4 @@ phases:
   build:
     commands:
       - echo "Packer build"
-      - ./packer build -var 'created_by=codepipeline' -var "branch_name=$BRANCH_NAME" packer-files/iopp-base-centos.json
+      - ./packer build -var 'created_by=code_pipeline' -var "branch_name=$BRANCH_NAME" packer-files/iopp-base-centos.json
