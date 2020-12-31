@@ -240,7 +240,7 @@ Resources:
                   - "cloudformation:Describe*"
                   - "cloudformation:Get*"
                 Resource:
-                  - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/cfn-base-inspector-ec2*"
+                  - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${AWS::StackName}*"
               - Sid: inspector
                 Effect: Allow
                 Action:
@@ -366,7 +366,7 @@ Resources:
                   - "cloudformation:Describe*"
                   - "cloudformation:Get*"
                 Resource:
-                  - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/cfn-base-inspector-ec2*"
+                  - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${AWS::StackName}*"
               - Sid: inspector
                 Effect: Allow
                 Action:
