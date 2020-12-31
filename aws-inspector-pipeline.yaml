@@ -571,6 +571,9 @@ Resources:
             - Name: SCAN_LENGTH
               Type: PLAINTEXT
               Value: !Ref scanLength
+            - Name: STACK_NAME
+              Type: PLAINTEXT
+              Value: !Ref AWS::StackName
         Source:
             Type: CODEPIPELINE
             BuildSpec: ./buildspecs/deploy-ami-buildspec.yaml
