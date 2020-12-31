@@ -11,4 +11,4 @@ phases:
     commands:
       - echo "Deploying EC2 instance for scanning"
       - AMI_ID=$(aws ec2 describe-images --owners 930517348825 --filters "Name=name,Values=centos7-iopp-base-master-*" --query 'sort_by(Images, &CreationDate)[].{ID:ImageId}' --output text --no-paginate --region eu-west-1 |tail -n 1)
-      - aws cloudformation deploy --template-file aws-inspector-cf.yaml --stack-name "${STACK_NAME}-${BRANCH_NAME}"  --no-fail-on-empty-changeset --parameter-overrides instanceName="cfn-base-inspector-ec2-${AMI_ID}" amiId=${AMI_ID} branchName=${BRANCH_NAME} createdBy=code_pipeline --capabilities CAPABILITY_IAM
+      - aws cloudformation deploy --template-file aws-inspector-cf.yaml --stack-name "${STACK_NAME}-${BRANCH_NAME}"  --no-fail-on-empty-changeset --parameter-overrides instanceName="${STACK_NAME}-${AMI_ID}" amiId=${AMI_ID} branchName=${BRANCH_NAME} createdBy=code_pipeline --capabilities CAPABILITY_IAM
